@@ -9,5 +9,10 @@ public class SceneController : MonoBehaviour
    public void ChangeScene()
     {
         SceneManager.LoadScene("COMP397Sec001_Labs");
+
     }
+    //public void ChangeSceneByName(string sceneName)
+    //{
+    //    SceneManager.LoadScene(SceneName);
+    //}
 }
