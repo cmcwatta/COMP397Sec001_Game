@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Scripting.APIUpdating;
 
 [RequireComponent(typeof(CharacterController))]
-    public class playercontroller : MonoBehaviour
+    public class playercontroller : Subject
     {
         COMP397Sec001_Labs _inputs;
     Vector2 _move;
@@ -36,7 +36,9 @@ using UnityEngine.Scripting.APIUpdating;
         _inputs.Player.Jump.performed += context => Jump();
     }
     void OnEnable() => _inputs.Enable();
+    
     void OnDisable() => _inputs.Disable();
+
     void FixedUpdate()
     {
         _isGrounded = Physics.CheckSphere(_groundCheck.position, _groundRadius, _groundMask);
@@ -45,6 +47,7 @@ using UnityEngine.Scripting.APIUpdating;
             _velocity.y = -2.0f;
         }
         Vector3 movement = new Vector3(_move.x, 0.0f, _move.y) * _speed * Time.fixedDeltaTime;
+        if (!_controller.enabled) { return; }
         _controller.Move(movement);
         _velocity.y += _gravity * Time.fixedDeltaTime;
         _controller.Move(_velocity * Time.fixedDeltaTime);
@@ -59,6 +62,7 @@ using UnityEngine.Scripting.APIUpdating;
         if (_isGrounded)
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
+            NotifyObservers(PlayerEnums.Jump);
         }
     }
     private void SendMessage(InputAction.CallbackContext context)
@@ -67,12 +71,13 @@ using UnityEngine.Scripting.APIUpdating;
     }
    void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"Triggering with. {other.gameObject.tag}");
+        //Debug.Log($"Triggering with. {other.gameObject.tag}");
         if (other.CompareTag("death"))
         {
             _controller.enabled = false;
             transform.position = _respawn.position;
             _controller.enabled = true;
+            NotifyObservers(PlayerEnums.Died);
         }
     }
     }
