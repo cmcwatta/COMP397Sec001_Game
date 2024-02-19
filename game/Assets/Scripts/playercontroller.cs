@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+//using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Scripting.APIUpdating;
@@ -7,8 +8,13 @@ using UnityEngine.Scripting.APIUpdating;
 [RequireComponent(typeof(CharacterController))]
     public class playercontroller : Subject
     {
-        COMP397Sec001_Labs _inputs;
+    #region Private Fields
+    COMP397Sec001_Labs _inputs;
     Vector2 _move;
+    Camera _camera;
+    Vector3 _camForward, _camRight;
+    #endregion
+    #region Serialized Fields
     [Header("Character Controller")]
     [SerializeField] CharacterController _controller;
     [Header("Movements")]
@@ -24,10 +30,12 @@ using UnityEngine.Scripting.APIUpdating;
 
     [Header("Respawn Locations")]
     [SerializeField] Transform _respawn;
+    #endregion
 
     // Start is called before the first frame update
     void Awake()
     {
+        _camera = Camera.main;
         _controller = GetComponent<CharacterController>();
         _inputs = new COMP397Sec001_Labs();
         _inputs.Enable();
@@ -46,7 +54,13 @@ using UnityEngine.Scripting.APIUpdating;
         {
             _velocity.y = -2.0f;
         }
-        Vector3 movement = new Vector3(_move.x, 0.0f, _move.y) * _speed * Time.fixedDeltaTime;
+        _camForward = _camera.transform.forward;
+        _camRight = _camera.transform.right;
+        _camForward.y = 0f;
+        _camRight.y = 0f;
+        _camForward.Normalize();
+        _camRight.Normalize();
+        Vector3 movement = (_camRight * _move.x + _camForward * _move.y) * _speed * Time.fixedDeltaTime;
         if (!_controller.enabled) { return; }
         _controller.Move(movement);
         _velocity.y += _gravity * Time.fixedDeltaTime;

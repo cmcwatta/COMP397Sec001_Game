@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 
-public class SceneController : MonoBehaviour
+public class SceneController : PersistentSingleton<SceneController>
 {
     // Start is called before the first frame update
-   public void ChangeScene()
+
+   
+    public void ChangeScene()
     {
         SceneManager.LoadScene("COMP397Sec001_Labs");
 
