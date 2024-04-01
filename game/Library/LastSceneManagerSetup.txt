@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/RandomPrototype.unity
+- path: Assets/Scenes/FactoryPrototype.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
